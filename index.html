@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,217 +10,357 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0fdf4',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            900: '#14532d',
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
                         }
                     }
                 }
             }
         }
     </script>
+    <style>
+        /* Smooth fade / transform transitions */
+        .slide-track {
+            display: flex;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white min-h-screen flex flex-col justify-between">
 
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center font-bold text-slate-950">S</div>
-                <span class="font-bold text-lg tracking-wider">SEMAIR</span>
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToSlide(0)">
+                <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center font-bold text-white shadow-sm">S</div>
+                <span class="font-bold text-lg tracking-wider text-slate-900">SEMAIR</span>
             </div>
-            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-400">
-                <a href="#about" class="hover:text-brand-500 transition-colors">About</a>
-                <a href="#architecture" class="hover:text-brand-500 transition-colors">Architecture</a>
-                <a href="#simulation" class="hover:text-brand-500 transition-colors">Live Demo</a>
-                <a href="#code" class="hover:text-brand-500 transition-colors">Code</a>
+            
+            <!-- Slide Quick Links -->
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <button onclick="goToSlide(0)" class="nav-btn hover:text-brand-600 transition-colors">Overview</button>
+                <button onclick="goToSlide(1)" class="nav-btn hover:text-brand-600 transition-colors">Architecture</button>
+                <button onclick="goToSlide(2)" class="nav-btn hover:text-brand-600 transition-colors">Live Demo</button>
+                <button onclick="goToSlide(3)" class="nav-btn hover:text-brand-600 transition-colors">Code</button>
             </div>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-4 py-2 rounded-full font-medium border border-slate-700 transition-all flex items-center gap-2">
-                <i class="fa-brands fa-github"></i> Repository
-            </a>
+
+            <div class="flex items-center gap-3">
+                <button id="toggleAutoBtn" onclick="toggleAutoPlay()" class="text-xs px-3 py-1.5 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition-all" title="Toggle 3s Auto-Slide">
+                    <i id="pauseIcon" class="fa-solid fa-pause text-[10px] text-brand-600"></i>
+                    <span id="pauseLabel" class="hidden sm:inline">Auto (3s)</span>
+                </button>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-full font-medium transition-all flex items-center gap-2 shadow-sm">
+                    <i class="fa-brands fa-github"></i>
+                    <span>Repository</span>
+                </a>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="pt-32 pb-20 px-6 max-w-6xl mx-auto flex flex-col items-center text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-500 text-xs font-semibold uppercase tracking-widest mb-6">
-            <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span> Hardware + IoT Project
-        </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white max-w-3xl leading-tight mb-6">
-            Real-Time Visual Air Quality Monitoring System
-        </h1>
-        <p class="text-slate-400 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
-            SEMAIR translates complex micro-climate air pollution data into clear, immediate visual traffic-light alerts for instant environmental awareness.
-        </p>
+    <!-- Main Horizontal Slider Viewport -->
+    <main class="pt-16 flex-1 relative overflow-hidden flex flex-col justify-center">
+        <div id="sliderTrack" class="slide-track w-full">
 
-        <!-- Tech Badges -->
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
-            <span class="px-4 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300"><i class="fa-solid fa-microchip text-brand-500 mr-2"></i>ESP32 / Arduino</span>
-            <span class="px-4 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300"><i class="fa-solid fa-wind text-brand-500 mr-2"></i>Air Sensors</span>
-            <span class="px-4 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300"><i class="fa-solid fa-traffic-light text-brand-500 mr-2"></i>Traffic Light Simulation</span>
-            <span class="px-4 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300"><i class="fa-solid fa-bolt text-brand-500 mr-2"></i>Real-time Logic</span>
-        </div>
-
-        <!-- Project Hero Card / Mockup -->
-        <div class="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-            <div class="absolute -right-20 -top-20 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800/80">
-                    <div class="text-xs text-slate-500 uppercase font-mono mb-2">Primary Goal</div>
-                    <div class="text-sm text-slate-200">Democratize air quality awareness using intuitive color signaling.</div>
-                </div>
-                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800/80">
-                    <div class="text-xs text-slate-500 uppercase font-mono mb-2">Signal Protocol</div>
-                    <div class="text-sm text-slate-200">Green (Safe), Yellow (Moderate), Red (Hazardous thresholds).</div>
-                </div>
-                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800/80">
-                    <div class="text-xs text-slate-500 uppercase font-mono mb-2">Target Deployment</div>
-                    <div class="text-sm text-slate-200">Classrooms, public halls, and urban micro-zones.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Architecture Section -->
-    <section id="architecture" class="py-20 px-6 max-w-6xl mx-auto border-t border-slate-900">
-        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white">System Architecture</h2>
-        <p class="text-slate-400 mb-12 max-w-2xl">Data flows seamlessly from physical gas and particulate sensing to real-time micro-controller evaluation, triggering immediate visual cues.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-            <!-- Step 1 -->
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex flex-col justify-between">
-                <div>
-                    <div class="text-brand-500 font-mono text-sm font-bold mb-2">01 / SENSING</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Data Acquisition</h3>
-                    <p class="text-slate-400 text-sm">Sensors capture ambient air parameters like gas levels and particulate concentration.</p>
-                </div>
-                <i class="fa-solid fa-sensor text-slate-700 text-3xl mt-6 self-end"></i>
-            </div>
-            <!-- Step 2 -->
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex flex-col justify-between">
-                <div>
-                    <div class="text-brand-500 font-mono text-sm font-bold mb-2">02 / PROCESSING</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Signal Parsing</h3>
-                    <p class="text-slate-400 text-sm">Microcontroller processes raw analog/digital signals and calculates AQI thresholds.</p>
-                </div>
-                <i class="fa-solid fa-microchip text-slate-700 text-3xl mt-6 self-end"></i>
-            </div>
-            <!-- Step 3 -->
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex flex-col justify-between">
-                <div>
-                    <div class="text-brand-500 font-mono text-sm font-bold mb-2">03 / EVALUATION</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">State Logic</h3>
-                    <p class="text-slate-400 text-sm">Compares current index against preset health safety boundaries (Green/Yellow/Red).</p>
-                </div>
-                <i class="fa-solid fa-sliders text-slate-700 text-3xl mt-6 self-end"></i>
-            </div>
-            <!-- Step 4 -->
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex flex-col justify-between">
-                <div>
-                    <div class="text-brand-500 font-mono text-sm font-bold mb-2">04 / OUTPUT</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Traffic Light Signal</h3>
-                    <p class="text-slate-400 text-sm">Actuates designated LED indicators to communicate safety levels instantaneously.</p>
-                </div>
-                <i class="fa-solid fa-traffic-light text-slate-700 text-3xl mt-6 self-end"></i>
-            </div>
-        </div>
-    </section>
-
-    <!-- Interactive Simulation Deck -->
-    <section id="simulation" class="py-20 px-6 max-w-6xl mx-auto border-t border-slate-900">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-white">Interactive SEMAIR Simulator</h2>
-                    <p class="text-slate-400 text-sm mt-1">Adjust the pollution slider to test how the traffic light logic responds.</p>
-                </div>
-                <div id="statusBadge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    AIR QUALITY: OPTIMAL
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                <!-- Controls -->
-                <div class="space-y-6 md:col-span-2">
-                    <div>
-                        <div class="flex justify-between text-sm mb-2 font-mono">
-                            <span class="text-slate-400">Air Pollution Index (Simulated)</span>
-                            <span id="aqiValue" class="text-brand-500 font-bold">25 AQI</span>
-                        </div>
-                        <input id="aqiSlider" type="range" min="0" max="200" value="25" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-500">
+            <!-- SLIDE 1: Hero Section -->
+            <section class="min-w-full flex-shrink-0 px-6 py-12 flex flex-col items-center justify-center text-center">
+                <div class="max-w-4xl mx-auto flex flex-col items-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold uppercase tracking-widest mb-6 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span> Hardware + IoT Project
                     </div>
-                    <div class="grid grid-cols-3 gap-3 text-center text-xs font-mono">
-                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                            <div class="text-slate-500 mb-1">0 - 50</div>
-                            <div class="text-emerald-400 font-bold">Green Light</div>
-                        </div>
-                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                            <div class="text-slate-500 mb-1">51 - 100</div>
-                            <div class="text-amber-400 font-bold">Yellow Light</div>
-                        </div>
-                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                            <div class="text-slate-500 mb-1">101+</div>
-                            <div class="text-rose-500 font-bold">Red Light</div>
+
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 max-w-3xl leading-tight mb-6">
+                        Real-Time Visual Air Quality Monitoring System
+                    </h1>
+
+                    <p class="text-slate-600 text-lg md:text-xl max-w-2xl mb-8 leading-relaxed">
+                        SEMAIR translates complex micro-climate air pollution data into clear, immediate visual traffic-light alerts for instant environmental awareness.
+                    </p>
+
+                    <!-- Tech Badges -->
+                    <div class="flex flex-wrap justify-center gap-2.5 mb-10">
+                        <span class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-700 shadow-sm"><i class="fa-solid fa-microchip text-brand-600 mr-2"></i>ESP32 / Arduino</span>
+                        <span class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-700 shadow-sm"><i class="fa-solid fa-wind text-brand-600 mr-2"></i>Air Sensors</span>
+                        <span class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-700 shadow-sm"><i class="fa-solid fa-traffic-light text-brand-600 mr-2"></i>Traffic Light Simulation</span>
+                        <span class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-700 shadow-sm"><i class="fa-solid fa-bolt text-brand-600 mr-2"></i>Real-time Logic</span>
+                    </div>
+
+                    <!-- Project Hero Summary Cards -->
+                    <div class="w-full max-w-3xl bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <div class="text-xs text-brand-700 font-semibold uppercase font-mono mb-1">Primary Goal</div>
+                                <div class="text-sm text-slate-700">Democratize air quality awareness using intuitive color signaling.</div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <div class="text-xs text-brand-700 font-semibold uppercase font-mono mb-1">Signal Protocol</div>
+                                <div class="text-sm text-slate-700">Green (Safe), Yellow (Moderate), Red (Hazardous thresholds).</div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <div class="text-xs text-brand-700 font-semibold uppercase font-mono mb-1">Target Deployment</div>
+                                <div class="text-sm text-slate-700">Classrooms, public halls, and urban micro-zones.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Visual Traffic Light Hardware Box -->
-                <div class="flex justify-center">
-                    <div class="bg-slate-950 border-4 border-slate-800 p-4 rounded-3xl flex flex-col gap-4 w-24 items-center shadow-2xl">
-                        <!-- Red Light -->
-                        <div id="lightRed" class="w-12 h-12 rounded-full bg-rose-950/40 border border-rose-900 transition-all duration-300"></div>
-                        <!-- Yellow Light -->
-                        <div id="lightYellow" class="w-12 h-12 rounded-full bg-amber-950/40 border border-amber-900 transition-all duration-300"></div>
-                        <!-- Green Light -->
-                        <div id="lightGreen" class="w-12 h-12 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_20px_rgba(34,197,94,0.6)] transition-all duration-300"></div>
+            <!-- SLIDE 2: Architecture Section -->
+            <section class="min-w-full flex-shrink-0 px-6 py-12 flex flex-col items-center justify-center">
+                <div class="max-w-5xl mx-auto w-full">
+                    <div class="text-center md:text-left mb-8">
+                        <span class="text-xs uppercase font-bold tracking-widest text-brand-600 font-mono">Workflow Pipeline</span>
+                        <h2 class="text-3xl font-bold text-slate-900 mt-1">System Architecture</h2>
+                        <p class="text-slate-600 mt-2 text-sm md:text-base max-w-2xl">Data flows seamlessly from physical gas and particulate sensing to real-time micro-controller evaluation, triggering immediate visual cues.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Step 1 -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-brand-500/50 transition-colors">
+                            <div>
+                                <div class="text-brand-600 font-mono text-xs font-bold mb-2">01 / SENSING</div>
+                                <h3 class="text-base font-bold text-slate-900 mb-2">Data Acquisition</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed">Sensors capture ambient air parameters like gas levels and particulate concentration.</p>
+                            </div>
+                            <i class="fa-solid fa-sensor text-slate-300 text-3xl mt-6 self-end"></i>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-brand-500/50 transition-colors">
+                            <div>
+                                <div class="text-brand-600 font-mono text-xs font-bold mb-2">02 / PROCESSING</div>
+                                <h3 class="text-base font-bold text-slate-900 mb-2">Signal Parsing</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed">Microcontroller processes raw analog/digital signals and calculates AQI thresholds.</p>
+                            </div>
+                            <i class="fa-solid fa-microchip text-slate-300 text-3xl mt-6 self-end"></i>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-brand-500/50 transition-colors">
+                            <div>
+                                <div class="text-brand-600 font-mono text-xs font-bold mb-2">03 / EVALUATION</div>
+                                <h3 class="text-base font-bold text-slate-900 mb-2">State Logic</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed">Compares current index against preset health safety boundaries (Green/Yellow/Red).</p>
+                            </div>
+                            <i class="fa-solid fa-sliders text-slate-300 text-3xl mt-6 self-end"></i>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-brand-500/50 transition-colors">
+                            <div>
+                                <div class="text-brand-600 font-mono text-xs font-bold mb-2">04 / OUTPUT</div>
+                                <h3 class="text-base font-bold text-slate-900 mb-2">Traffic Light Signal</h3>
+                                <p class="text-slate-600 text-xs leading-relaxed">Actuates designated LED indicators to communicate safety levels instantaneously.</p>
+                            </div>
+                            <i class="fa-solid fa-traffic-light text-slate-300 text-3xl mt-6 self-end"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Code Snippet Section -->
-    <section id="code" class="py-20 px-6 max-w-6xl mx-auto border-t border-slate-900">
-        <h2 class="text-2xl font-bold text-white mb-2">Embedded Logic</h2>
-        <p class="text-slate-400 text-sm mb-6">Core threshold loop managing pin outputs based on sensor reads.</p>
+            <!-- SLIDE 3: Interactive Simulation Deck -->
+            <section class="min-w-full flex-shrink-0 px-6 py-12 flex flex-col items-center justify-center">
+                <div class="max-w-4xl mx-auto w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <span class="text-xs uppercase font-bold tracking-widest text-brand-600 font-mono">Hands-on Testbed</span>
+                            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-0.5">Interactive SEMAIR Simulator</h2>
+                            <p class="text-slate-500 text-sm mt-1">Adjust the pollution slider to test how the traffic light logic responds.</p>
+                        </div>
+                        <div id="statusBadge" class="px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
+                            AIR QUALITY: OPTIMAL
+                        </div>
+                    </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden font-mono text-xs text-slate-300">
-            <div class="bg-slate-950 px-4 py-2 border-b border-slate-800 text-slate-500 flex justify-between">
-                <span>semair_control.ino</span>
-                <span>C++ / Arduino</span>
-            </div>
-            <pre class="p-4 overflow-x-auto"><code><span class="text-purple-400">void</span> <span class="text-blue-400">evaluateAirQuality</span>(<span class="text-purple-400">int</span> sensorValue) {
-  <span class="text-purple-400">if</span> (sensorValue &lt;= 50) {
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                        <!-- Controls -->
+                        <div class="space-y-6 md:col-span-2">
+                            <div>
+                                <div class="flex justify-between text-sm mb-2 font-mono">
+                                    <span class="text-slate-600 font-medium">Air Pollution Index (Simulated)</span>
+                                    <span id="aqiValue" class="text-brand-600 font-bold">25 AQI</span>
+                                </div>
+                                <input id="aqiSlider" type="range" min="0" max="200" value="25" class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 text-center text-xs font-mono">
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div class="text-slate-400 mb-1">0 - 50</div>
+                                    <div class="text-emerald-600 font-bold">Green Light</div>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div class="text-slate-400 mb-1">51 - 100</div>
+                                    <div class="text-amber-600 font-bold">Yellow Light</div>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div class="text-slate-400 mb-1">101+</div>
+                                    <div class="text-rose-600 font-bold">Red Light</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Traffic Light Hardware Box -->
+                        <div class="flex justify-center">
+                            <div class="bg-slate-900 border-4 border-slate-700 p-4 rounded-3xl flex flex-col gap-4 w-24 items-center shadow-xl">
+                                <!-- Red Light -->
+                                <div id="lightRed" class="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 transition-all duration-300"></div>
+                                <!-- Yellow Light -->
+                                <div id="lightYellow" class="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 transition-all duration-300"></div>
+                                <!-- Green Light -->
+                                <div id="lightGreen" class="w-12 h-12 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.7)] transition-all duration-300"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Code Section -->
+            <section class="min-w-full flex-shrink-0 px-6 py-12 flex flex-col items-center justify-center">
+                <div class="max-w-4xl mx-auto w-full">
+                    <div class="mb-6">
+                        <span class="text-xs uppercase font-bold tracking-widest text-brand-600 font-mono">Firmware</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">Embedded Logic</h2>
+                        <p class="text-slate-600 text-sm">Core threshold loop managing pin outputs based on sensor reads.</p>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden font-mono text-xs shadow-md">
+                        <div class="bg-slate-800/90 px-4 py-2.5 border-b border-slate-700 text-slate-400 flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+                                <span class="ml-2 font-medium text-slate-300">semair_control.ino</span>
+                            </div>
+                            <span class="text-slate-400 text-[11px]">C++ / Arduino</span>
+                        </div>
+                        <pre class="p-5 overflow-x-auto text-slate-200 leading-relaxed"><code><span class="text-blue-400">void</span> <span class="text-sky-300">evaluateAirQuality</span>(<span class="text-blue-400">int</span> sensorValue) {
+  <span class="text-blue-400">if</span> (sensorValue &lt;= 50) {
     <span class="text-emerald-400">digitalWrite</span>(PIN_GREEN, HIGH);
     <span class="text-emerald-400">digitalWrite</span>(PIN_YELLOW, LOW);
     <span class="text-emerald-400">digitalWrite</span>(PIN_RED, LOW);
-  } <span class="text-purple-400">else if</span> (sensorValue &gt; 50 &amp;&amp; sensorValue &lt;= 100) {
+  } <span class="text-blue-400">else if</span> (sensorValue &gt; 50 &amp;&amp; sensorValue &lt;= 100) {
     <span class="text-emerald-400">digitalWrite</span>(PIN_GREEN, LOW);
     <span class="text-emerald-400">digitalWrite</span>(PIN_YELLOW, HIGH);
     <span class="text-emerald-400">digitalWrite</span>(PIN_RED, LOW);
-  } <span class="text-purple-400">else</span> {
+  } <span class="text-blue-400">else</span> {
     <span class="text-emerald-400">digitalWrite</span>(PIN_GREEN, LOW);
     <span class="text-emerald-400">digitalWrite</span>(PIN_YELLOW, LOW);
     <span class="text-emerald-400">digitalWrite</span>(PIN_RED, HIGH);
   }
 }</code></pre>
+                    </div>
+                </div>
+            </section>
+
         </div>
-    </section>
+
+        <!-- Horizontal Slide Navigation Controls -->
+        <div class="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 z-20">
+            <button onclick="prevSlide()" class="w-9 h-9 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 shadow-sm flex items-center justify-center transition-all" aria-label="Previous Slide">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <div id="dotContainer" class="flex items-center gap-2"></div>
+            <button onclick="nextSlide()" class="w-9 h-9 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 shadow-sm flex items-center justify-center transition-all" aria-label="Next Slide">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+    </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-900 py-8 text-center text-xs text-slate-600">
-        <p>SEMAIR Project Portfolio &copy; 2026. Built with HTML & Tailwind CSS.</p>
+    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>SEMAIR Project Portfolio &copy; 2026. Built with HTML & Tailwind CSS.</p>
+            <p class="font-mono text-slate-400">Auto-slide interval: 3s</p>
+        </div>
     </footer>
 
-    <!-- Interactive Simulator Script -->
+    <!-- Scripts: Simulator + Auto Slider Logic -->
     <script>
+        // --- 1. Horizontal Slider Engine ---
+        const totalSlides = 4;
+        let currentSlide = 0;
+        let autoPlayTimer = null;
+        let isAutoPlay = true;
+
+        const sliderTrack = document.getElementById('sliderTrack');
+        const dotContainer = document.getElementById('dotContainer');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const pauseLabel = document.getElementById('pauseLabel');
+
+        // Create navigation dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = `h-2 rounded-full transition-all duration-300 ${i === 0 ? 'w-8 bg-brand-600' : 'w-2 bg-slate-300 hover:bg-slate-400'}`;
+            dot.onclick = () => goToSlide(i);
+            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+            dotContainer.appendChild(dot);
+        }
+
+        function updateSlider() {
+            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+            const dots = dotContainer.children;
+            for (let i = 0; i < totalSlides; i++) {
+                if (i === currentSlide) {
+                    dots[i].className = 'h-2 w-8 bg-brand-600 rounded-full transition-all duration-300';
+                } else {
+                    dots[i].className = 'h-2 w-2 bg-slate-300 hover:bg-slate-400 rounded-full transition-all duration-300';
+                }
+            }
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+            restartTimer();
+        }
+
+        function startTimer() {
+            if (autoPlayTimer) clearInterval(autoPlayTimer);
+            autoPlayTimer = setInterval(nextSlide, 3000);
+        }
+
+        function restartTimer() {
+            if (isAutoPlay) {
+                startTimer();
+            }
+        }
+
+        function toggleAutoPlay() {
+            isAutoPlay = !isAutoPlay;
+            if (isAutoPlay) {
+                startTimer();
+                pauseIcon.className = 'fa-solid fa-pause text-[10px] text-brand-600';
+                pauseLabel.textContent = 'Auto (3s)';
+            } else {
+                clearInterval(autoPlayTimer);
+                pauseIcon.className = 'fa-solid fa-play text-[10px] text-slate-500';
+                pauseLabel.textContent = 'Paused';
+            }
+        }
+
+        // Start auto-slide on load
+        startTimer();
+
+        // --- 2. Interactive Simulator Logic ---
         const slider = document.getElementById('aqiSlider');
         const aqiValue = document.getElementById('aqiValue');
         const statusBadge = document.getElementById('statusBadge');
@@ -229,27 +369,33 @@
         const lightYellow = document.getElementById('lightYellow');
         const lightRed = document.getElementById('lightRed');
 
+        // Pause auto-sliding while dragging range slider so testing is seamless
+        slider.addEventListener('mousedown', () => clearInterval(autoPlayTimer));
+        slider.addEventListener('touchstart', () => clearInterval(autoPlayTimer));
+        slider.addEventListener('mouseup', () => restartTimer());
+        slider.addEventListener('touchend', () => restartTimer());
+
         slider.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             aqiValue.textContent = `${val} AQI`;
 
-            // Reset lights
-            lightGreen.className = "w-12 h-12 rounded-full bg-emerald-950/40 border border-emerald-900 transition-all duration-300";
-            lightYellow.className = "w-12 h-12 rounded-full bg-amber-950/40 border border-amber-900 transition-all duration-300";
-            lightRed.className = "w-12 h-12 rounded-full bg-rose-950/40 border border-rose-900 transition-all duration-300";
+            // Dim all lights
+            lightGreen.className = "w-12 h-12 rounded-full bg-slate-800 border border-slate-700 transition-all duration-300";
+            lightYellow.className = "w-12 h-12 rounded-full bg-slate-800 border border-slate-700 transition-all duration-300";
+            lightRed.className = "w-12 h-12 rounded-full bg-slate-800 border border-slate-700 transition-all duration-300";
 
             if (val <= 50) {
-                lightGreen.className = "w-12 h-12 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_20px_rgba(34,197,94,0.6)] transition-all duration-300";
+                lightGreen.className = "w-12 h-12 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.7)] transition-all duration-300";
                 statusBadge.textContent = "AIR QUALITY: OPTIMAL";
-                statusBadge.className = "px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                statusBadge.className = "px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm";
             } else if (val <= 100) {
-                lightYellow.className = "w-12 h-12 rounded-full bg-amber-400 border border-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.6)] transition-all duration-300";
+                lightYellow.className = "w-12 h-12 rounded-full bg-amber-400 border border-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.7)] transition-all duration-300";
                 statusBadge.textContent = "AIR QUALITY: MODERATE";
-                statusBadge.className = "px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                statusBadge.className = "px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200 shadow-sm";
             } else {
-                lightRed.className = "w-12 h-12 rounded-full bg-rose-500 border border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.6)] transition-all duration-300";
+                lightRed.className = "w-12 h-12 rounded-full bg-rose-500 border border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.7)] transition-all duration-300";
                 statusBadge.textContent = "AIR QUALITY: POOR / HAZARDOUS";
-                statusBadge.className = "px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                statusBadge.className = "px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200 shadow-sm";
             }
         });
     </script>

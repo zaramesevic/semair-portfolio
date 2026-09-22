@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEMAIR — Real-Time Visual Air Quality Monitoring System</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS & Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="design_css.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="desktop-app">
+
+  <!-- Sticky Top Navigation Bar -->
+  <header class="header">
+    <div class="logo">SEMAIR</div>
+    
+    <nav class="nav-menu" aria-label="Main Navigation">
+      <a href="#about" class="nav-button">About</a>
+      <a href="#demo" class="nav-button">Live demo</a>
+      <a href="#goals" class="nav-button">Goals</a>
+    </nav>
+
+    <div class="header-badge">
+      <img src="ssst-logo.jpg" alt="University Logo" class="institution-logo" onerror="this.style.display='none'">
+      <span>Gymnasium SSST</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Hero / About Section -->
+    <section class="hero-section" id="about">
+      <h1 class="hero-title">Real-Time Visual Air<br>Quality Monitoring System</h1>
+      <p class="hero-description">
+        SEMAIR translates complex micro-climate air pollution data into clear,
+        immediate visual traffic-light alerts for instant environmental awareness.
+      </p>
+
+      <!-- Key Highlight Badges -->
+      <div class="highlight-cards">
+        <div class="highlight-card">
+          <p>Goal is to raise awareness of air quality monitoring with intuitive signaling</p>
+        </div>
+        <div class="highlight-card">
+          <p>Target deployment places may include classrooms, public halls and urban micro-zones</p>
+        </div>
+        <div class="highlight-card">
+          <p>Instant optical warning removes the barrier of interpreting raw microgram metrics</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. How It Works Carousel Section -->
+    <section class="how-it-works-section" id="how-it-works">
+      <h2 class="section-title">How It Works</h2>
+      
+      <div class="carousel-wrapper" id="carouselWrapper">
+        <button class="nav-arrow prev" onclick="prevSlide()" aria-label="Previous slide">&#10094;</button>
+
+        <div class="slider-viewport">
+          <div class="slider-track" id="sliderTrack">
+            
+            <!-- SLIDE 1: Sensing -->
+            <div class="slide-item">
+              <div class="step-container">
+                <div class="step-content">
+                  <span class="step-tag">01 / SENSING</span>
+                  <h3 class="step-heading">Data Acquisition</h3>
+                  <p class="step-body">
+                    Sensors capture ambient air parameters like gas levels and particulate concentration in real time.
+                  </p>
+                </div>
+                <div class="step-visuals">
+                  <div class="media-frame">
+                    <img src="sensor-hardware-1.png" alt="Air quality sensor prototype" onerror="this.parentNode.innerHTML='<div class=\'placeholder-box\'>Hardware Sensor Prototype</div>'">
+                  </div>
+                  <div class="media-frame">
+                    <img src="sensor-hardware-2.png" alt="MQ series gas sensor setup" onerror="this.parentNode.innerHTML='<div class=\'placeholder-box\'>Gas Sensor Module</div>'">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SLIDE 2: Processing -->
+            <div class="slide-item">
+              <div class="step-container">
+                <div class="step-content">
+                  <span class="step-tag">02 / PROCESSING</span>
+                  <h3 class="step-heading">Signal Parsing</h3>
+                  <p class="step-body">
+                    Microcontroller processes raw analog/digital signals and calculates AQI thresholds using an exponential smoothing filter.
+                  </p>
+                </div>
+                <div class="step-visuals">
+                  <div class="code-window">
+                    <div class="code-header">
+                      <span class="window-dot red"></span>
+                      <span class="window-dot yellow"></span>
+                      <span class="window-dot green"></span>
+                      <span class="filename">semair_control.ino</span>
+                    </div>
+                    <pre class="code-body"><code>void evaluateAirQuality(int sensorValue) {
+  if (sensorValue <= 50) {
+    digitalWrite(PIN_GREEN, HIGH);
+    digitalWrite(PIN_YELLOW, LOW);
+    digitalWrite(PIN_RED, LOW);
+  } else if (sensorValue > 50 && sensorValue <= 100) {
+    digitalWrite(PIN_GREEN, LOW);
+    digitalWrite(PIN_YELLOW, HIGH);
+    digitalWrite(PIN_RED, LOW);
+  } else {
+    digitalWrite(PIN_GREEN, LOW);
+    digitalWrite(PIN_YELLOW, LOW);
+    digitalWrite(PIN_RED, HIGH);
+  }
+}</code></pre>
+                  </div>
+                  <div class="media-frame aqi-chart">
+                    <img src="aqi-index-chart.jpg" alt="Air Quality Index Chart" onerror="this.parentNode.innerHTML='<div class=\'placeholder-box\'>AQI Index Reference Chart</div>'">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SLIDE 3: Output -->
+            <div class="slide-item">
+              <div class="step-container">
+                <div class="step-content">
+                  <span class="step-tag">03 / OUTPUT</span>
+                  <h3 class="step-heading">Traffic Light Signal</h3>
+                  <p class="step-body">
+                    Compares current index against preset health safety boundaries (Green/Yellow/Red). Actuates high-luminance LED indicators instantaneously.
+                  </p>
+                </div>
+                <div class="step-visuals">
+                  <div class="media-frame">
+                    <img src="hardware-output.png" alt="Hardware physical enclosure" onerror="this.parentNode.innerHTML='<div class=\'placeholder-box\'>Traffic Light Physical Enclosure</div>'">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <button class="nav-arrow next" onclick="nextSlide()" aria-label="Next slide">&#10095;</button>
+      </div>
+
+      <div class="carousel-dots" id="dotContainer">
+        <button class="dot active" onclick="goToSlide(0)" aria-label="Go to slide 1"></button>
+        <button class="dot" onclick="goToSlide(1)" aria-label="Go to slide 2"></button>
+        <button class="dot" onclick="goToSlide(2)" aria-label="Go to slide 3"></button>
+      </div>
+    </section>
+
+    <!-- 3. NEW SECTION: Live Demo -->
+    <section class="demo-section" id="demo">
+      <h2 class="section-title">Live Demo</h2>
+      <p class="section-subtitle">Simulate real-world pollution index values to test automated traffic light response.</p>
+
+      <div class="demo-panel">
+        <div class="demo-controls">
+          <div class="slider-header">
+            <span class="slider-title">Simulated Sensor AQI Level</span>
+            <span id="aqiValue" class="aqi-badge">25 AQI</span>
+          </div>
+          
+          <input id="aqiSlider" type="range" min="0" max="200" value="25" class="custom-range-slider">
+
+          <div class="aqi-tiers">
+            <div class="tier-card tier-green">
+              <div class="tier-range">0 – 50</div>
+              <div class="tier-label">Optimal (Green)</div>
+            </div>
+            <div class="tier-card tier-yellow">
+              <div class="tier-range">51 – 100</div>
+              <div class="tier-label">Moderate (Yellow)</div>
+            </div>
+            <div class="tier-card tier-red">
+              <div class="tier-range">101+</div>
+              <div class="tier-label">Hazardous (Red)</div>
+            </div>
+          </div>
+
+          <div class="status-summary">
+            <span id="statusBadge" class="status-pill green">AIR QUALITY: OPTIMAL</span>
+            <p id="statusDescription" class="status-text">Safe indoor and outdoor air quality levels. No protective action required.</p>
+          </div>
+        </div>
+
+        <!-- Hardware Traffic Light Enclosure -->
+        <div class="demo-traffic-light">
+          <div class="traffic-light-housing">
+            <div id="lightRed" class="lamp red"></div>
+            <div id="lightYellow" class="lamp yellow"></div>
+            <div id="lightGreen" class="lamp green active"></div>
+          </div>
+          <span class="hardware-label">PHYSICAL BEACON</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. NEW SECTION: Goals -->
+    <section class="goals-section" id="goals">
+      <h2 class="section-title">Goals</h2>
+      <p class="section-subtitle">Core targets and deployment roadmap for the SEMAIR system.</p>
+
+      <div class="goals-grid">
+        <div class="goal-box">
+          <div class="goal-icon"><i class="fa-solid fa-eye"></i></div>
+          <h3 class="goal-heading">Immediate Cognitive Awareness</h3>
+          <p class="goal-body">
+            Replace numerical particulate charts with an intuitive universal traffic light signal that anyone can interpret at a glance without technical training.
+          </p>
+        </div>
+
+        <div class="goal-box">
+          <div class="goal-icon"><i class="fa-solid fa-school"></i></div>
+          <h3 class="goal-heading">Public & Classroom Deployment</h3>
+          <p class="goal-body">
+            Install compact low-power units in schools, lecture halls, and offices to inform students and staff when room ventilation is required.
+          </p>
+        </div>
+
+        <div class="goal-box">
+          <div class="goal-icon"><i class="fa-solid fa-microchip"></i></div>
+          <h3 class="goal-heading">Affordable Open Architecture</h3>
+          <p class="goal-body">
+            Built on accessible microcontrollers and modular sensors so academic institutions can easily reproduce, customize, and maintain the hardware.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+<footer>
+  <small>SEMAIR Project Portfolio © 2026</small>
+</footer>
+  <!-- Scripts -->
+  <script>
+    // --- 1. How It Works Carousel Logic ---
+    const totalSlides = 3;
+    let currentSlide = 0;
+    const slideInterval = 3500;
+    let autoSlideTimer = null;
+
+    const sliderTrack = document.getElementById('sliderTrack');
+    const dots = document.querySelectorAll('#dotContainer .dot');
+    const carouselWrapper = document.getElementById('carouselWrapper');
+
+    function updateSlider() {
+      sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlider();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateSlider();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlider();
+      restartTimer();
+    }
+
+    function startTimer() {
+      stopTimer();
+      autoSlideTimer = setInterval(nextSlide, slideInterval);
+    }
+
+    function stopTimer() {
+      if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+        autoSlideTimer = null;
+      }
+    }
+
+    function restartTimer() {
+      startTimer();
+    }
+
+    carouselWrapper.addEventListener('mouseenter', stopTimer);
+    carouselWrapper.addEventListener('mouseleave', startTimer);
+    startTimer();
+
+    // --- 2. Live Demo Interactive Simulator Logic ---
+    const slider = document.getElementById('aqiSlider');
+    const aqiValue = document.getElementById('aqiValue');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusDescription = document.getElementById('statusDescription');
+    
+    const lightGreen = document.getElementById('lightGreen');
+    const lightYellow = document.getElementById('lightYellow');
+    const lightRed = document.getElementById('lightRed');
+
+    slider.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value);
+      aqiValue.textContent = `${val} AQI`;
+
+      // Reset all lamps
+      lightGreen.classList.remove('active');
+      lightYellow.classList.remove('active');
+      lightRed.classList.remove('active');
+
+      if (val <= 50) {
+        lightGreen.classList.add('active');
+        statusBadge.textContent = "AIR QUALITY: OPTIMAL";
+        statusBadge.className = "status-pill green";
+        statusDescription.textContent = "Safe indoor and outdoor air quality levels. No protective action required.";
+      } else if (val <= 100) {
+        lightYellow.classList.add('active');
+        statusBadge.textContent = "AIR QUALITY: MODERATE";
+        statusBadge.className = "status-pill yellow";
+        statusDescription.textContent = "Acceptable air quality; sensitive individuals may consider ventilating the area.";
+      } else {
+        lightRed.classList.add('active');
+        statusBadge.textContent = "AIR QUALITY: HAZARDOUS";
+        statusBadge.className = "status-pill red";
+        statusDescription.textContent = "Critical pollution detected! Immediate ventilation and air filtration recommended.";
+      }
+    });
+  </script>
+
+</body>
+</html>
