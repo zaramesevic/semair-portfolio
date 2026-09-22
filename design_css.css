@@ -618,3 +618,119 @@ main {
   line-height: 1.6;
   color: #dcdbff;
 }
+/* ================= Responsive Media Queries ================= */
+
+/* Tablets & Small Laptops (under 992px) */
+@media (max-width: 992px) {
+  .step-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 32px;
+  }
+
+  .step-content {
+    max-width: 100%;
+  }
+
+  .step-visuals {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .demo-panel {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .slider-header {
+    justify-content: center;
+  }
+
+  .status-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Mobile Phones (under 768px) */
+@media (max-width: 768px) {
+  body.desktop-app {
+    padding: 10px 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    padding: 14px 16px;
+    gap: 14px;
+  }
+
+  .header-badge {
+    display: none; /* Keeps the mobile header compact */
+  }
+
+  .nav-menu {
+    gap: 8px;
+    width: 100%;
+  }
+
+  .nav-button {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+  }
+
+  .carousel-wrapper {
+    position: relative;
+  }
+
+  /* Make navigation arrows overlay cleanly on small screens */
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: rgba(21, 18, 104, 0.8);
+  }
+
+  .nav-arrow.prev {
+    left: 6px;
+    margin-right: 0;
+  }
+
+  .nav-arrow.next {
+    right: 6px;
+    margin-left: 0;
+  }
+
+  .slide-item {
+    padding: 24px 12px;
+  }
+
+  .code-window {
+    max-width: 100%;
+  }
+
+  .media-frame {
+    max-width: 100%;
+  }
+}
+
+/* Extra Small Phones (under 480px) */
+@media (max-width: 480px) {
+  .aqi-tiers {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .highlight-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .highlight-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
